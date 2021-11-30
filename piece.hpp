@@ -25,11 +25,13 @@ class Piece
         std::string name;
         Team team;
         PType type;
+        std::pair<int,int> position;
 
     public:
         std::string get_name();
         Team get_team();
         PType get_type();
+        std::pair<int,int> get_position();
         int operator == (Piece p);
         std::vector<std::pair<int,int>> get_valid_moves();
         void move(std::pair<int,int> coords);

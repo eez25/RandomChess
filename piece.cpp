@@ -18,6 +18,11 @@ PType Piece::get_type()
     return type;
 }
 
+std::pair<int,int> Piece::get_position()
+{
+    return position;
+}
+
 // Overloaded operator
 int Piece::operator == (Piece p)
 {
