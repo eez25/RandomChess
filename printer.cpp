@@ -14,6 +14,7 @@ void print_board(std::vector<std::vector<std::string>> board)
     print_col_names();
 }
 
+/* prints a horizontal line */
 void print_horiz()
 {
     std::cout << "   +---+---+---+---+---+---+---+---+" << std::endl;
@@ -24,6 +25,7 @@ void print_col_names()
     std::cout << "     A   B   C   D   E   F   G   H  " << std::endl;
 }
 
+/* prints a single row of the board, including the pieces currently present on it */
 void print_row(std::vector<std::string> row)
 {
     for (std::string p : row)
@@ -32,6 +34,8 @@ void print_row(std::vector<std::string> row)
     }
     std::cout << " |";
 }
+
+/* The below was and can be used for unit testing of this printer */
 
 // std::vector<std::vector<std::string>> test = {{"","","K","","","","",""},
 //                                               {"","","","","","","",""},
