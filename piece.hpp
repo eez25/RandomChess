@@ -3,15 +3,35 @@
 #include <string>
 #include <vector>
 
+enum PType 
+{
+    Pawn = 0,
+    Rook = 1,
+    Knight = 2,
+    Bishop = 3,
+    Queen = 4,
+    King = 5
+};
+
+enum Team 
+{
+    White = true,
+    Black = false
+};
+
 class Piece
 {
     private:
         std::string name;
-        bool team;
-        
+        Team team;
+        PType type;
+
     public:
         std::string get_name();
-        bool get_team();
+        Team get_team();
+        PType get_type();
+        int operator == (Piece p);
         std::vector<std::pair<int,int>> get_valid_moves();
         void move(std::pair<int,int> coords);
+        void random_move();
 };
