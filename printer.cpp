@@ -1,14 +1,16 @@
 #include <iostream>
 
+#include "board.hpp"
+
 #include "printer.hpp"
 
-void print_board(std::vector<std::vector<std::string>> board)
+void print_board(Board b)
 {
     print_col_names();
     print_horiz();
     for (int i = 7; i >= 0; i--)
     {
-        std::cout << " " << i+1; print_row(board[i]); std::cout << " " << i+1 << std::endl;
+        std::cout << " " << i+1; print_row(b.board[i]); std::cout << " " << i+1 << std::endl;
         print_horiz();
     }
     print_col_names();
@@ -26,11 +28,11 @@ void print_col_names()
 }
 
 /* prints a single row of the board, including the pieces currently present on it */
-void print_row(std::vector<std::string> row)
+void print_row(std::vector<Piece*> row)
 {
-    for (std::string p : row)
+    for (Piece* p : row)
     {
-        std:: cout << " | " << (p.empty()? " " : p);
+        std:: cout << " | " << p->get_name();
     }
     std::cout << " |";
 }

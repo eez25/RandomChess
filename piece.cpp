@@ -109,4 +109,8 @@ void Piece::random_move()
     move(m[0]);
 }
 
-bool Piece::is_threatening(std::pair<int,int> pos);
+bool Piece::is_threatening(std::pair<int,int> pos)
+{
+    std::vector<std::pair<int,int>> valid_moves = get_valid_moves();
+    return std::count(valid_moves.begin(),valid_moves.end(),pos) > 0;
+}
