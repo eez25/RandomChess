@@ -29,9 +29,12 @@ class Board
         //determines if the team given has checked the other team
         bool has_check(Team t);
 
-        //removes a piece from the board; returns false if the piece is already off the board
+        //removes a piece from the board and makes it inactive; returns false if the piece is already off the board
         bool remove_piece(Piece* p);
 
-        //replaces a piece on the board; returns false if the piece is already on the board
+        //replaces a piece on the board and makes it active; returns false if the piece is already on the board
         bool replace_piece(Piece* p, std::pair<int,int> pos);
+
+        // moves Piece p to board space pos and handles chain reactions such as removing pieces that were captured
+        void move(Piece* p, std::pair<int,int> pos);
 };

@@ -4,7 +4,7 @@
 
 #include "printer.hpp"
 
-void print_board(Board b)
+void printer::print_board(Board b)
 {
     print_col_names();
     print_horiz();
@@ -16,19 +16,19 @@ void print_board(Board b)
     print_col_names();
 }
 
-/* prints a horizontal line */
-void print_horiz()
+// prints a horizontal line 
+void printer::print_horiz()
 {
     std::cout << "   +---+---+---+---+---+---+---+---+" << std::endl;
 }
 
-void print_col_names()
+void printer::print_col_names()
 {
     std::cout << "     A   B   C   D   E   F   G   H  " << std::endl;
 }
 
 /* prints a single row of the board, including the pieces currently present on it */
-void print_row(std::vector<Piece*> row)
+void printer::print_row(std::vector<Piece*> row)
 {
     for (Piece* p : row)
     {
@@ -37,7 +37,7 @@ void print_row(std::vector<Piece*> row)
     std::cout << " |";
 }
 
-/* The below was and can be used for unit testing of this printer */
+/* The below was used for unit testing of this printer before replacing a vector of strings with a Board */
 
 // std::vector<std::vector<std::string>> test = {{"","","K","","","","",""},
 //                                               {"","","","","","","",""},

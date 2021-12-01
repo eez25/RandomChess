@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <random>
 
+#include "board.hpp"
+
+extern Board B;
+
 Team opposite(Team t)
 {
     switch(t)
@@ -16,7 +20,7 @@ Team opposite(Team t)
     }
 }
 
-//utilizes enum class names similar to namespaces
+// utilizes enum class names similar to namespaces
 Piece* Piece::empty = &Piece(PType::Empty,Team::Empty, std::pair(-1,-1));
 
 Piece* Piece::get_empty()
@@ -92,12 +96,22 @@ int Piece::operator == (std::pair<PType,Team> t)
 
 std::vector<std::pair<int,int>> Piece::get_valid_moves()
 {
-    //TODO after making board
+    std::vector<std::pair<int,int>> moves;
+    return moves;
 }
 
-void Piece::move(std::pair<int,int> coords)
+bool Piece::move(std::pair<int,int> coords)
 {
-    //TODO after making board
+    std::vector<std::pair<int,int>> valid_moves = get_valid_moves();
+
+    // STL algorithm
+    // return false if the move is invalid
+    if (std::count(valid_moves.begin(),valid_moves.end(),coords) == 0) return false;
+
+    // if the move is valid:
+    B.move(this,coords);
+
+    return true;
 }
 
 void Piece::random_move()

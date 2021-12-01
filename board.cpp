@@ -98,3 +98,20 @@ bool Board::replace_piece(Piece* p, std::pair<int,int> pos)
     board[p->get_position().first][p->get_position().second] = p;
     return true;
 }
+
+void Board::move(Piece* p, std::pair<int,int> pos)
+{
+    Piece* old = board[pos.first][pos.second];
+
+    // remove the old piece if there is one
+    if (old != Piece::get_empty()) remove_piece(old);
+
+    // move this piece to the new place
+    board[pos.first][pos.second] = p;
+
+    // put nothing in the place this piece used to occupy
+    board[p->get_position().first][p->get_position().second] = Piece::get_empty();
+    
+    // update the position attribute to be the new location
+    p->set_position(pos);
+}
