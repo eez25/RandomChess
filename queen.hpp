@@ -4,8 +4,9 @@
 // Multiclass inheritance
 class Queen : public Rook, public Bishop
 {
-    //constructor
-    Queen(Team team, std::pair<int,int> pos) : Piece(PType::Queen, team, pos){}
+    public:
+        //constructor
+        Queen(Team team, int r, col c) : Piece(PType::Q, team, std::pair(r,(int)c)){}
 
-    std::vector<std::pair<int,int>> get_valid_moves();
+        std::vector<std::pair<int,int>> get_valid_moves();
 };

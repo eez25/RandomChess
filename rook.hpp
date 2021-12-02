@@ -6,7 +6,7 @@ class Rook : virtual public Piece
 {
     public:
         //constructor
-        Rook(Team team, std::pair<int,int> pos) : Piece(PType::Rook, team, pos){}
+        Rook(Team team, int r, col c) : Piece(PType::R, team, std::pair(r,(int)c)){}
         Rook() = default;
 
         std::vector<std::pair<int,int>> get_valid_moves();

@@ -1,5 +1,73 @@
 #include "board.hpp"
 
+#include "bishop.hpp"
+#include "king.hpp"
+#include "knight.hpp"
+#include "pawn.hpp"
+#include "queen.hpp"
+#include "rook.hpp"
+
+std::vector<Piece*> generate_back_row(Team t, int r)
+{
+    return {
+        &Rook(t,r,col::A),
+        &Knight(t,r,col::B),
+        &Bishop(t,r,col::C),
+        &King(t,r,col::D),
+        &Queen(t,r,col::E),
+        &Bishop(t,r,col::F),
+        &Knight(t,r,col::G),
+        &Rook(t,r,col::H)
+        };
+}
+
+std::vector<Piece*> generate_pawn_row(Team t, int r)
+{
+    std::vector<Piece*> row;
+    for (int i = 0; i < BOARD_LENGTH; i++)
+    {
+        row.push_back(&Pawn(t,r,(col)i));
+    }
+    return row;
+}
+
+std::vector<Piece*> generate_empty_row()
+{
+    std::vector<Piece*> row;
+    for (int i = 0; i < BOARD_LENGTH; i++)
+    {
+        row.push_back(Piece::get_empty());
+    }
+    return row;
+}
+
+Board::Board()
+{
+    // generate the board's pieces in their rows
+    std::vector<Piece*> white_back = generate_back_row(White,0),
+                        white_pawn = generate_pawn_row(White,1),
+                        black_pawn = generate_pawn_row(Black,6),
+                        black_back = generate_back_row(Black,7),
+                        active_pieces;
+
+    // STL algorithm
+    // add all the new pieces to the active_pieces vector
+    active_pieces.insert(active_pieces.end(),white_back.begin(),white_back.end());
+    active_pieces.insert(active_pieces.end(),white_pawn.begin(),white_pawn.end());
+    active_pieces.insert(active_pieces.end(),black_pawn.begin(),black_pawn.end());
+    active_pieces.insert(active_pieces.end(),black_back.begin(),black_back.end());
+
+    // fill out the board with the new rows and with pointers to the Empty Piece for empty spaces
+    board.push_back(white_back);
+    board.push_back(white_pawn);
+    for (int i = 2; i < BOARD_LENGTH - 2; i++)
+    {
+        board.push_back(generate_empty_row());
+    }
+    board.push_back(black_pawn);
+    board.push_back(black_back);
+}
+
 bool same_type_team(Piece* p, PType pt, Team t)
 {
     return *p == std::pair(pt,t);
@@ -51,7 +119,7 @@ std::vector<Piece*> Board::get_pieces(std::vector<Piece*> vec, Team t)
 bool Board::has_checkmate(Team t)
 {
     // get opposing king
-    Piece* king = get_pieces(active_pieces, King, Piece::opposite(t))[0];
+    Piece* king = get_pieces(active_pieces, K, Piece::opposite(t))[0];
 
     // true if he has no moves and is_threatened AND TODO CANNOT BE PROTECTED
     return king->get_valid_moves().size() == 0 && has_check(t);
@@ -61,7 +129,7 @@ bool Board::has_check(Team t)
 {
     // get team t's active pieces and the opposing king
     std::vector<Piece*> pieces = get_pieces(active_pieces, t);
-    Piece* king = get_pieces(active_pieces,King,Piece::opposite(t))[0];
+    Piece* king = get_pieces(active_pieces,K,Piece::opposite(t))[0];
 
     // if any of these pieces are threatening the opposing king, return true
     for (Piece* p : pieces)

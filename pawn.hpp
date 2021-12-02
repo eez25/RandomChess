@@ -4,7 +4,7 @@ class Pawn : public Piece
 {
     public:
         //constructor
-        Pawn(Team team, std::pair<int,int> pos) : Piece(PType::Pawn, team, pos){}
+        Pawn(Team team, int r, col c) : Piece(PType::P, team, std::pair(r,(int)c)){}
 
         std::vector<std::pair<int,int>> get_valid_moves();
 };

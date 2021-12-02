@@ -6,6 +6,17 @@
 const int BOARD_LENGTH = 8;
 const std::vector<Piece> all_pieces;
 
+enum class col {
+    A = 0,
+    B = 1,
+    C = 2,
+    D = 3,
+    E = 4,
+    F = 5,
+    G = 6,
+    H = 7
+};
+
 class Board
 { 
     public:

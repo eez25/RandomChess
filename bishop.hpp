@@ -6,7 +6,7 @@ class Bishop : virtual public Piece
 {
     public:
         //constructor
-        Bishop(Team team, std::pair<int,int> pos) : Piece(PType::Bishop, team, pos){}
+        Bishop(Team team, int r, col c) : Piece(PType::B, team, std::pair(r,(int)c)){}
         Bishop() = default;
         
         std::vector<std::pair<int,int>> get_valid_moves();

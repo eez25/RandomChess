@@ -4,7 +4,7 @@ class King : public Piece
 {
     public:
         //constructor
-        King(Team team, std::pair<int,int> pos) : Piece(PType::King, team, pos){}
-
+        King(Team team, int r, col c) : Piece(PType::K, team, std::pair(r,(int)c)){}
+        
         std::vector<std::pair<int,int>> get_valid_moves();
 };

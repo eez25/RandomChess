@@ -5,12 +5,12 @@
 
 enum PType 
 {
-    Pawn = 0,
-    Rook = 1,
-    Knight = 2,
-    Bishop = 3,
-    Queen = 4,
-    King = 5,
+    P = 0, // Pawn
+    R = 1, // Rook
+    N = 2, // kNight
+    B = 3, // Bishop
+    Q = 4, // Queen
+    K = 5, // King
     Empty = 6
 };
 

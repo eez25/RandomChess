@@ -49,22 +49,22 @@ Piece::Piece(PType type, Team team, std::pair<int,int> position) :
             case PType::Empty:
                 name = " ";
                 break;
-            case Pawn:
+            case P:
                 name = team == White? "P" : "p";
                 break;
-            case Rook:
+            case R:
                 name = team == White? "R" : "r";
                 break;
-            case Knight:
+            case N:
                 name = team == White? "N" : "n";
                 break;
-            case Bishop:
+            case PType::B:
                 name = team == White? "B" : "b";
                 break;
-            case King:
+            case K:
                 name = team == White? "K" : "k";
                 break;
-            case Queen:
+            case Q:
                 name = team == White? "Q" : "q";
                 break;
         } 
