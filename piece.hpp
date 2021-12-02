@@ -31,11 +31,15 @@ class Piece
         static Piece* empty;
 
     public:
-        // initializer
+        // constructor
         Piece(PType type, Team team, std::pair<int,int> position);
+        Piece() = default;
 
         // returns a pointer to an empty Piece placeholder
         static Piece* get_empty();
+
+        // returns 1 if the forward direction of this Piece's Team is positive or -1 if that is in the forward direction
+        int forward();
 
         // getters
         std::string get_name();
@@ -54,11 +58,10 @@ class Piece
         int operator == (std::pair<PType,Team> t);
 
         // returns a vector of the possible moves that can be made
-        std::vector<std::pair<int,int>> get_valid_moves();
+        virtual std::vector<std::pair<int,int>> get_valid_moves();
 
         /* moves a piece and handles chain reactions of other pieces needing to be removed, etc.
-         * returns false if the move is invalid;
-         */
+         * returns false if the move is invalid */
         bool move(std::pair<int,int> coords);
 
         // moves a piece to a valid location chosen uniformly at random
@@ -66,4 +69,8 @@ class Piece
 
         // returns true if this piece is threatening the square at pos
         bool is_threatening(std::pair<int,int> pos);
+
+        /* updates moves with the pair (r,c) if it is not occupied by a teammate piece;
+         * returns true if there is already a piece there, enemy or not */
+        bool check_valid(std::vector<std::pair<int,int>>* moves, int r, int c);
 };

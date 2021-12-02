@@ -50,15 +50,20 @@ std::vector<Piece*> Board::get_pieces(std::vector<Piece*> vec, Team t)
 
 bool Board::has_checkmate(Team t)
 {
-    Piece* king = get_pieces(active_pieces, King, t)[0];
+    // get opposing king
+    Piece* king = get_pieces(active_pieces, King, Piece::opposite(t))[0];
+
+    // true if he has no moves and is_threatened AND TODO CANNOT BE PROTECTED
     return king->get_valid_moves().size() == 0 && has_check(t);
 }
 
 bool Board::has_check(Team t)
 {
+    // get team t's active pieces and the opposing king
     std::vector<Piece*> pieces = get_pieces(active_pieces, t);
     Piece* king = get_pieces(active_pieces,King,Piece::opposite(t))[0];
 
+    // if any of these pieces are threatening the opposing king, return true
     for (Piece* p : pieces)
     {
         if (p->is_threatening(king->get_position())) return true;
@@ -83,19 +88,25 @@ bool switch_vecs(std::vector<Piece*> add_to, std::vector<Piece*> remove_from, Pi
 
 bool Board::remove_piece(Piece* p)
 {
+    // attempt to move p from removed to active and return false if not possible
     bool already_gone = switch_vecs(removed_pieces,active_pieces,p);
     if (already_gone) return false;
 
+    // set the piece at this board space to be empty
     board[p->get_position().first][p->get_position().second] = Piece::get_empty();
+
     return true;
 }
 
 bool Board::replace_piece(Piece* p, std::pair<int,int> pos)
 {
+    // attempt to move p from removed to active and return false if not possible
     bool already_gone = switch_vecs(active_pieces,removed_pieces,p);
     if (already_gone) return false;
 
+    // set this piece to its proper place on the board
     board[p->get_position().first][p->get_position().second] = p;
+    
     return true;
 }
 
