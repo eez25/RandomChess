@@ -42,12 +42,13 @@ int Piece::forward()
 	}
 }
 
-Piece::Piece() : type(PType::E), team(Team::Empty), position(std::pair(-1, -1)), name(' ') {}
+Piece::Piece() : type(PType::E), team(Team::Empty), position(std::pair(-1, -1)), name(' '), active(false) {}
 
-Piece::Piece(PType type, Team team, std::pair<int, int> position) :
+Piece::Piece(PType type, Team team, std::pair<int, int> position, bool active) :
 	type(type),
 	team(team),
-	position(position)
+	position(position),
+	active(active)
 {
 	switch (type) {
 	case PType::E:
@@ -97,6 +98,16 @@ std::pair<int, int> Piece::get_position()
 void Piece::set_position(std::pair<int, int> p)
 {
 	position = p;
+}
+
+bool Piece::get_active()
+{
+	return active;
+}
+
+void Piece::set_active(bool a)
+{
+	active = a;
 }
 
 // Overloaded operator

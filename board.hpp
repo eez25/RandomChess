@@ -31,16 +31,13 @@ public:
 	//holds the pieces active on the board in their appropriate spaces
 	std::vector<std::vector<Piece*>> board;
 
-	//holds the pieces who no longer occupy spaces on the board
-	std::vector<Piece*> removed_pieces;
-
-	//holds the pieces who occupy spaces on the board
-	std::vector<Piece*> active_pieces;
+	//holds pointers to all the pieces
+	std::vector<Piece*> pieces;
 
 	//retrieves the pieces in the given vector who meet the criteria passed in
-	std::vector<Piece*> get_pieces(std::vector<Piece*> vec, PType pt, Team t);
-	std::vector<Piece*> get_pieces(std::vector<Piece*> vec, PType pt);
-	std::vector<Piece*> get_pieces(std::vector<Piece*> vec, Team t);
+	std::vector<Piece*> get_active_pieces(PType pt, Team t);
+	std::vector<Piece*> get_active_pieces(PType pt);
+	std::vector<Piece*> get_active_pieces(Team t);
 
 	//determines if the team given has checkmated the other team
 	bool has_checkmate(Team t);

@@ -62,11 +62,7 @@ std::vector<Piece*> generate_empty_row()
 
 void Board::delete_heap_mem()
 {
-	for (Piece* p : active_pieces)
-	{
-		delete p;
-	}
-	for (Piece* p : removed_pieces)
+	for (Piece* p : pieces)
 	{
 		delete p;
 	}
@@ -78,15 +74,14 @@ Board::Board()
 	std::vector<Piece*> white_back = generate_back_row(Team::White, 0),
 		white_pawn = generate_pawn_row(Team::White, 1),
 		black_pawn = generate_pawn_row(Team::Black, 6),
-		black_back = generate_back_row(Team::Black, 7),
-		active_pieces;
+		black_back = generate_back_row(Team::Black, 7);
 
 	// STL algorithm
 	// add all the new pieces to the active_pieces vector
-	active_pieces.insert(active_pieces.end(), white_back.begin(), white_back.end());
-	active_pieces.insert(active_pieces.end(), white_pawn.begin(), white_pawn.end());
-	active_pieces.insert(active_pieces.end(), black_pawn.begin(), black_pawn.end());
-	active_pieces.insert(active_pieces.end(), black_back.begin(), black_back.end());
+	pieces.insert(pieces.end(), white_back.begin(), white_back.end());
+	pieces.insert(pieces.end(), white_pawn.begin(), white_pawn.end());
+	pieces.insert(pieces.end(), black_pawn.begin(), black_pawn.end());
+	pieces.insert(pieces.end(), black_back.begin(), black_back.end());
 
 	// fill out the board with the new rows and with pointers to the Empty Piece for empty spaces
 	board.push_back(white_back);
@@ -120,7 +115,7 @@ std::vector<Piece*> check_pieces(bool (*check_same)(Piece*, PType, Team), std::v
 	std::vector<Piece*> ret;
 	for (Piece* p : vec)
 	{
-		if (check_same(p, pt, t))
+		if (p->get_active() && check_same(p, pt, t))
 		{
 			ret.push_back(p);
 		}
@@ -129,28 +124,28 @@ std::vector<Piece*> check_pieces(bool (*check_same)(Piece*, PType, Team), std::v
 }
 
 //passes function pointer as parameter
-std::vector<Piece*> Board::get_pieces(std::vector<Piece*> vec, PType pt, Team t)
+std::vector<Piece*> Board::get_active_pieces(PType pt, Team t)
 {
-	return check_pieces(same_type_team, vec, pt, t);
+	return check_pieces(same_type_team, pieces, pt, t);
 }
 
 //passes function pointer as parameter
-std::vector<Piece*> Board::get_pieces(std::vector<Piece*> vec, PType pt)
+std::vector<Piece*> Board::get_active_pieces(PType pt)
 {
-	return check_pieces(same_type, vec, pt, Team::Empty);
+	return check_pieces(same_type, pieces, pt, Team::Empty);
 }
 
 //passes function pointer as parameter
-std::vector<Piece*> Board::get_pieces(std::vector<Piece*> vec, Team t)
+std::vector<Piece*> Board::get_active_pieces(Team t)
 {
-	return check_pieces(same_team, vec, PType::E, t);
+	return check_pieces(same_team, pieces, PType::E, t);
 }
 
 
 bool Board::has_checkmate(Team t)
 {
 	// get opposing king
-	Piece* king = get_pieces(active_pieces, PType::K, Piece::opposite(t))[0];
+	Piece* king = get_active_pieces(PType::K, Piece::opposite(t))[0];
 
 	// true if he has no moves and is_threatened AND TODO CANNOT BE PROTECTED
 	return king->get_valid_moves().size() == 0 && has_check(t);
@@ -159,8 +154,8 @@ bool Board::has_checkmate(Team t)
 bool Board::has_check(Team t)
 {
 	// get team t's active pieces and the opposing king
-	std::vector<Piece*> pieces = get_pieces(active_pieces, t);
-	Piece* king = get_pieces(active_pieces, PType::K, Piece::opposite(t))[0];
+	std::vector<Piece*> pieces = get_active_pieces(t);
+	Piece* king = get_active_pieces(PType::K, Piece::opposite(t))[0];
 
 
 	// if any of these pieces are threatening the opposing king, return true
@@ -171,26 +166,13 @@ bool Board::has_check(Team t)
 	return false;
 }
 
-//removes an element from remove_from and adds it to add_to; returns false if it is not in remove_from
-bool switch_vecs(std::vector<Piece*> add_to, std::vector<Piece*> remove_from, Piece* element)
-{
-	//STL algorithm
-	std::vector<Piece*>::iterator found_el = std::find(remove_from.begin(), remove_from.end(), element);
-
-	//return false if the piece is already not there (so find returned the last element instead)
-	if (found_el[0] != element) return true;
-
-	//if the piece is in the vector we want to remove it from
-	remove_from.erase(found_el);
-	add_to.push_back(element);
-	return false;
-}
-
 bool Board::remove_piece(Piece* p)
 {
-	// attempt to move p from removed to active and return false if not possible
-	bool already_gone = switch_vecs(removed_pieces, active_pieces, p);
-	if (already_gone) return false;
+	// if p is already inactive, return false that we can't make it inactive
+	if (not p->get_active()) return false;
+
+	// otherwise, set p to inactive
+	p->set_active(false);
 
 	// set the piece at this board space to be empty
 	board[p->get_position().first][p->get_position().second] = Piece::get_empty();
@@ -200,12 +182,15 @@ bool Board::remove_piece(Piece* p)
 
 bool Board::replace_piece(Piece* p, std::pair<int, int> pos)
 {
-	// attempt to move p from removed to active and return false if not possible
-	bool already_gone = switch_vecs(active_pieces, removed_pieces, p);
-	if (already_gone) return false;
+	// if p is already active, return false that we can't make it inactive
+	if (p->get_active()) return false;
+
+	// otherwise, set it to active and update its position
+	p->set_active(true);
+	p->set_position(pos);
 
 	// set this piece to its proper place on the board
-	board[p->get_position().first][p->get_position().second] = p;
+	board[pos.first][pos.second] = p;
 
 	return true;
 }
@@ -230,7 +215,7 @@ void Board::move(Piece* p, std::pair<int, int> pos)
 Move Board::random_move()
 {
 	// get the possible pieces the computer can move
-	std::vector<Piece*> comp_pieces = get_pieces(active_pieces, COMP_TEAM);
+	std::vector<Piece*> comp_pieces = get_active_pieces(COMP_TEAM);
 
 	// calculate how many possible moves there are and use move counts as a distribution for picking a piece
 	std::vector<int> num_moves(comp_pieces.size());

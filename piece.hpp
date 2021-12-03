@@ -30,10 +30,11 @@ private:
 	Team team;
 	PType type;
 	std::pair<int, int> position;
+	bool active;
 
 public:
 	// constructor
-	Piece(PType type, Team team, std::pair<int, int> position);
+	Piece(PType type, Team team, std::pair<int, int> position, bool active = true);
 	Piece();
 
 	// returns a pointer to an empty Piece placeholder
@@ -47,9 +48,11 @@ public:
 	Team get_team();
 	PType get_type();
 	std::pair<int, int> get_position();
+	bool get_active();
 
-	// setter; returns false if another piece is already there
+	// setters
 	void set_position(std::pair<int, int> p);
+	void set_active(bool a);
 
 	// returns the opposite team
 	static Team opposite(Team t);
