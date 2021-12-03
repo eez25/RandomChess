@@ -1,7 +1,7 @@
 # RandomChess
-By Enya Zimecka
+By Enya Zimecka  
 
-Overview:
+Overview:  
 This is a simple model of a chess game.  It is playable at the command line and has a built-in opponent who moves uniformly at random.
 
 Compiling:
