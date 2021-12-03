@@ -26,4 +26,8 @@ namespace printer {
     void print_help();
 
     void print_pairs(std::vector<std::pair<int,int>> pairs);
+
+    void print_win();
+
+    void print_lose();
 }

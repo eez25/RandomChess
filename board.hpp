@@ -43,7 +43,7 @@ public:
 	bool has_checkmate(Team t);
 
 	//determines if the team given has checked the other team
-	bool has_check(Team t);
+	std::vector<Piece*> get_checking_pieces(Team t);
 
 	//removes a piece from the board and makes it inactive; returns false if the piece is already off the board
 	bool remove_piece(Piece* p);
@@ -53,10 +53,15 @@ public:
 
 	// moves Piece p to board space pos and handles chain reactions such as removing pieces that were captured
 	void move(Piece* p, std::pair<int, int> pos);
-	
-	// choses a random valid move and makes it
+
+	// choses a random valid move and makes; assumes no checkmate
 	Move random_move();
 
 	// returns true if the space at (r,c) is not on the board
 	static bool off_board(int r, int c);
+
+	/* returns the spaces on the board that can be blocked in order to remove the king from being checked;
+	 * this must be the intersection of each threatener's blockables because one piece must block all
+	 * threateners or else the king will be captured in the next turn; already sorted */
+	std::vector < std::pair<int, int>> get_necessary_blocks(std::vector<Piece*> threateners);
 };

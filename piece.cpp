@@ -132,6 +132,21 @@ bool Piece::move(std::pair<int, int> coords)
 {
 	std::vector<std::pair<int, int>> valid_moves = get_valid_moves();
 
+	// check if there are any necessary blocks to be made to stop checking pieces from the opposite team
+	std::vector<std::pair<int, int>> must_move_to = Bd.get_necessary_blocks(Bd.get_checking_pieces(Piece::opposite(get_team())));
+	if (must_move_to.size() > 0)
+	{
+		// STL algorithm
+		std::sort(valid_moves.begin(), valid_moves.end());
+
+		std::vector<std::pair<int, int>> intersect;
+		std::set_intersection(
+			valid_moves.begin(), valid_moves.end(),
+			must_move_to.begin(), must_move_to.end(),
+			std::back_inserter(intersect));
+		valid_moves = intersect;
+	}
+
 	std::cout << "Attempting to move piece " << get_name() << std::endl << "Valid moves:" << std::endl;
 	printer::print_pairs(valid_moves);
 	std::cout << std::endl;
@@ -190,4 +205,11 @@ bool Piece::check_valid(std::vector<std::pair<int, int>>* moves, int r, int c)
 			moves->emplace_back(r, c);
 		return true;
 	}
+}
+
+std::vector<std::pair<int, int>> Piece::get_blockables()
+{
+	std::cout << "THIS METHOD SHOULD NEVER BE CALLED: Piece::get_blockables()";
+	std::vector<std::pair<int, int>> blockables;
+	return blockables;
 }

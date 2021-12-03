@@ -89,3 +89,14 @@ void printer::print_pairs(std::vector<std::pair<int, int>> pairs)
         std::cout << "(" << p.first << "," << p.second << ")," << std::endl;
     }
 }
+
+void printer::print_win()
+{
+    std::cout << "Checkmate, you win!  Type 'again' if you want to play again or 'quit' to quit." << std::endl;
+}
+
+void printer::print_lose()
+{
+    std::cout << "Checkmate, you lose!  Better luck next time!  Type 'again' if you want to play" << std::endl
+        << "again or 'quit' to quit." << std::endl;
+}

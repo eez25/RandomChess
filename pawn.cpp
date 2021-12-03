@@ -39,3 +39,9 @@ std::vector<std::pair<int, int>> Pawn::get_valid_moves()
 
 	return moves;
 }
+
+std::vector < std::pair<int, int>> Pawn::get_blockables()
+{
+	// the only way to stop a pawn from threatening a square is to capture it
+	return Piece::get_blockables();
+}

@@ -43,3 +43,9 @@ std::vector<std::pair<int, int>> Knight::get_valid_moves()
 
 	return moves;
 }
+
+std::vector < std::pair<int, int>> Knight::get_blockables()
+{
+	// the only way to stop a knight from threatening a square is to capture it
+	return Piece::get_blockables();
+}

@@ -14,6 +14,9 @@ Board Bd;
 Team COMP_TEAM = Team::Black;
 Team USER_TEAM = Team::White;
 
+// declarations for mutual recursion
+void do_the_thing();
+
 int parse_col(char c)
 {
 	switch (c)
@@ -42,8 +45,8 @@ int parse_col(char c)
 	case 'H':
 	case 'h':
 		return 7;
-	
-	// if the character is none of the above, it is not accepted
+
+		// if the character is none of the above, it is not accepted
 	default:
 		throw std::exception();
 	}
@@ -60,15 +63,53 @@ int parse_row(char c)
 	return int(c - '0') - 1;
 }
 
+void end_or_new_game(bool win)
+{
+	// tell the user the result of the game
+	win ? printer::print_win() : printer::print_lose();
+
+	// check if the player wants to play again
+	std::string play;
+	std::cin >> play;
+
+	// restart the game to play again
+	if (play == "again")
+	{
+		Bd.delete_heap_mem();
+		Bd = Board();
+		do_the_thing();
+	}
+	return;
+}
+
+bool check_and_handle_end()
+{
+	// check if the game is won
+	if (Bd.has_checkmate(USER_TEAM))
+	{
+		end_or_new_game(true);
+		return true;
+	}
+	if (Bd.has_checkmate(COMP_TEAM))
+	{
+		end_or_new_game(false);
+		return true;
+	}
+	return false;
+}
+
 void do_the_thing()
 {
+	// return if the game is won (and if the user doesn't want to play again, which is checked in the function)
+	if (check_and_handle_end()) return;
+
 	// prompt user
 	std::cout << std::endl;
 	printer::print_prompt();
 
 	// collect input
 	char input[9];
-	std::cin.getline(input,9);
+	std::cin.getline(input, 9);
 	std::cout << std::endl;
 
 	// quit if that's the input
@@ -81,9 +122,6 @@ void do_the_thing()
 		std::pair<int, int> from = { parse_row(input[1]),parse_col(input[0]) },
 			to = { parse_row(input[7]),parse_col(input[6]) };
 
-		std::cout << "parsed input " << input << " -> " << from.first << "," << from.second << " to " 
-			<< to.first << "," << to.second << std::endl;
-
 		// Checking that a user is allowed to move this piece
 		if (Bd.board[from.first][from.second]->get_team() != USER_TEAM)
 		{
@@ -91,9 +129,15 @@ void do_the_thing()
 			throw std::exception();
 		}
 
-		// Attempt to move and handle if it is valid or not
-		if (Bd.board[from.first][from.second]->move(to)) { //valid
+		// Attempt to move and if it is valid
+		if (Bd.board[from.first][from.second]->move(to)) {
+			// check the user just finished the game
+			if(check_and_handle_end()) return;
+
+			// if not, move the computer randomly
 			Move m = Bd.random_move();
+
+			// begin again to prompt the user for the next move
 			printer::print_board(Bd);
 			printer::print_comp_move(m);
 			do_the_thing();

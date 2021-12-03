@@ -13,6 +13,7 @@
 #include <iostream>
 
 extern Team COMP_TEAM;
+extern Team USER_TEAM;
 
 std::vector<Piece*> generate_back_row(Team t, int r)
 {
@@ -147,23 +148,48 @@ bool Board::has_checkmate(Team t)
 	// get opposing king
 	Piece* king = get_active_pieces(PType::K, Piece::opposite(t))[0];
 
-	// true if he has no moves and is_threatened AND TODO CANNOT BE PROTECTED
-	return king->get_valid_moves().size() == 0 && has_check(t);
+	// no checkmate if king can move
+	if (king->get_valid_moves().size() > 0) return false;
+
+	std::vector<Piece*> kings_teammates = get_active_pieces(Piece::opposite(t));
+
+	// else if king cannot move, is he unblockably threatened?
+	std::vector<std::pair<int, int>> need_to_block = get_necessary_blocks(get_checking_pieces(t));
+
+	for (Piece* potential_blocker : kings_teammates)
+	{
+		std::vector < std::pair<int, int>> intersect,
+			can_be_blocked = potential_blocker->get_valid_moves();
+
+		// STL algorithm
+		std::sort(can_be_blocked.begin(), can_be_blocked.end());
+
+		std::set_intersection(
+			need_to_block.begin(), need_to_block.end(),
+			can_be_blocked.begin(), can_be_blocked.end(),
+			std::back_inserter(intersect));
+
+		// if all threateners can be blocked, no checkmate
+		if (intersect.size() > 0) return false;
+	}
+
+	// if no piece could block all threateners, checkmate
+	return  false;
 }
 
-bool Board::has_check(Team t)
+std::vector<Piece*> Board::get_checking_pieces(Team t)
 {
 	// get team t's active pieces and the opposing king
-	std::vector<Piece*> pieces = get_active_pieces(t);
+	std::vector<Piece*> pieces = get_active_pieces(t),
+		checking_pieces;
 	Piece* king = get_active_pieces(PType::K, Piece::opposite(t))[0];
-
 
 	// if any of these pieces are threatening the opposing king, return true
 	for (Piece* p : pieces)
 	{
-		if (p->is_threatening(king->get_position())) return true;
+		if (p->is_threatening(king->get_position())) checking_pieces.push_back(p);
 	}
-	return false;
+	return checking_pieces;
 }
 
 bool Board::remove_piece(Piece* p)
@@ -219,47 +245,97 @@ Move Board::random_move()
 	// get the possible pieces the computer can move
 	std::vector<Piece*> comp_pieces = get_active_pieces(COMP_TEAM);
 
-	// calculate how many possible moves there are and use move counts as a distribution for picking a piece
-	std::vector<int> num_moves;
-	int sum = 0, count;
+	// get necessary moves and flag need_to_block if applicable
+	std::vector<std::pair<int, int>> blocks = get_necessary_blocks(get_checking_pieces(USER_TEAM));
+	bool need_to_block = blocks.size() > 0;
+
+	// container for moves to randomly choose from
+	std::vector < std::pair<
+		std::pair<int, int>,
+		std::pair<int, int>>> all_valid_moves;
 
 	std::cout << "counts of possible moves:" << std::endl;
 
 	for (Piece* p : comp_pieces)
 	{
-		printer::print_pairs(p->get_valid_moves());
-		count = (int)p->get_valid_moves().size();
-		std::cout << p->get_name() << " at (" << p->get_position().first << ","
-			<< p->get_position().second << ") has " << count << " moves." << std::endl;
-		num_moves.push_back(count);
-		sum += count;
+		std::vector<std::pair<int, int>> valid_moves = p->get_valid_moves();
+
+		// if there are spaces that need to be blocked, ignore possible moves that don't block them
+		if (need_to_block)
+		{
+			// STL algorithm
+			std::sort(valid_moves.begin(), valid_moves.end());
+
+			std::vector<std::pair<int, int>> intersect;
+			std::set_intersection(
+				valid_moves.begin(), valid_moves.end(),
+				blocks.begin(), blocks.end(),
+				std::back_inserter(intersect)
+			);
+			valid_moves = intersect;
+		}
+
+		for (std::pair<int, int> move : valid_moves)
+		{
+			all_valid_moves.emplace_back(p->get_position(), move);
+		}
 	}
 
-	// randomly generate a number in the count distribution
+	// randomly choose a move to make
 	std::mt19937 rng(std::random_device{}());
-	std::uniform_int_distribution<int> range(0, sum);
-	int rand_int = range(rng);
+	std::uniform_int_distribution<int> range(0, all_valid_moves.size());
+	int i = range(rng);
 
-	std::cout << sum << " " << rand_int << " corresponds to ";
+	// collect data about the move
+	std::pair<int, int> from = all_valid_moves[i].first,
+		to = all_valid_moves[i].second;
+	char moved_name = board[from.first][from.second]->get_name(),
+		captured_name = board[to.first][to.second]->get_name();
 
-	// determine which piece corresponds to that number in the distribution
-	for (int i = 0; i < comp_pieces.size(); i++)
-	{
-		if (rand_int > num_moves[i])
-		{
-			rand_int -= num_moves[i];
-		}
-		else
-		{
-			std::cout << comp_pieces[i]->get_name() << std::endl;
-			// if this is the piece the random number corresponds to, move it randomly
-			Move m = comp_pieces[i]->random_move();
-			return m;
-		}
-	}
+	// make the move
+	board[from.first][from.second]->move(to);
+	return Move(moved_name, from, to, captured_name);
 }
 
 bool Board::off_board(int r, int c)
 {
 	return r < 0 || r >= BOARD_LENGTH || c < 0 || c >= BOARD_LENGTH;
+}
+
+std::vector<std::pair<int, int>> Board::get_necessary_blocks(std::vector<Piece*> threateners)
+{
+	std::vector<std::pair<int, int>> necessary_blocks;
+	bool needs_init = true;
+
+	// check how to block each threatener
+	for (Piece* threatener : threateners)
+	{
+		// if this is the first threatener we're looking at
+		if (needs_init)
+		{
+			necessary_blocks = threatener->get_blockables();
+			std::sort(necessary_blocks.begin(), necessary_blocks.end());
+			needs_init = false;
+			continue;
+		}
+
+		// otherwise
+		std::vector<std::pair<int, int>> intersect,
+			blockables = threatener->get_blockables();
+
+		// STL algorithm
+		std::sort(blockables.begin(), blockables.end());
+
+		// get the intersection of the ways to block threateners we have and are looking at
+		std::set_intersection(
+			necessary_blocks.begin(), necessary_blocks.end(),
+			blockables.begin(), blockables.end(),
+			std::back_inserter(intersect));
+
+		// resets for next loop to be the cumulative intersection; can be size 0
+		necessary_blocks = intersect;
+	}
+
+	// already sorted
+	return necessary_blocks;
 }

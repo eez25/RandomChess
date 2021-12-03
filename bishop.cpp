@@ -39,3 +39,21 @@ std::vector<std::pair<int, int>> Bishop::get_valid_moves()
 
 	return moves;
 }
+
+std::vector<std::pair<int, int>> Bishop::get_blockables()
+{
+	std::vector<std::pair<int, int>> blockables;
+
+	std::pair<int, int> bis_pos = get_position(),
+		king_pos = Bd.get_active_pieces(PType::K, Piece::opposite(get_team()))[0]->get_position();
+
+	int diff = bis_pos.first - king_pos.first;
+
+	// to block the bishop from checking, one can capture it or block any space between it and the king
+	for (int i = 0; i != diff; diff > 0 ? i++ : i--)
+	{
+		blockables.emplace_back(bis_pos.first + i, bis_pos.second + i);
+	}
+
+	return blockables;
+}

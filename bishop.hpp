@@ -12,4 +12,6 @@ public:
 	Bishop() = default;
 
 	std::vector<std::pair<int, int>> get_valid_moves();
+
+	std::vector<std::pair<int, int>> get_blockables();
 };

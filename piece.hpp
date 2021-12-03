@@ -61,11 +61,16 @@ public:
 	int operator == (Piece p);
 	int operator == (std::pair<PType, Team> t);
 
-	// returns a vector of the possible moves that can be made
+	// returns a vector of the possible moves that can be made given any pieces checking the king
 	virtual std::vector<std::pair<int, int>> get_valid_moves();
 
+	/* returns a vector of the possible moves that can block this piece from checking the king; 
+	   assumes this piece is checking the opposing king; base Piece:: version assumes only way 
+	   to block is to capture piece */ 
+	virtual std::vector < std::pair<int, int>> get_blockables();
+
 	/* moves a piece and handles chain reactions of other pieces needing to be removed, etc.
-	 * returns false if the move is invalid */
+	   returns false if the move is invalid */
 	bool move(std::pair<int, int> coords);
 
 	// moves a piece to a valid location chosen uniformly at random
@@ -75,6 +80,6 @@ public:
 	bool is_threatening(std::pair<int, int> pos);
 
 	/* updates moves with the pair (r,c) if it is not occupied by a teammate piece;
-	 * returns true if there is already a piece there, enemy or not */
+	   returns true if there is already a piece there, enemy or not */
 	bool check_valid(std::vector<std::pair<int, int>>* moves, int r, int c);
 };
