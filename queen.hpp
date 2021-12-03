@@ -1,11 +1,9 @@
 #pragma once
 
-#include "rook.hpp"
-#include "bishop.hpp"
 #include "board.hpp"
 
 // Multiclass inheritance
-class Queen : public Rook, public Bishop
+class Queen : public Piece
 {
 public:
 	//constructor

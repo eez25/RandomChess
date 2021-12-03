@@ -4,9 +4,7 @@
 
 #include "board.hpp"
 
-// making this a virtual class because it is one of two (this and Bishop) that
-// are subclassed by the same child class (Queen)
-class Rook : virtual public Piece
+class Rook : public Piece
 {
 public:
 	//constructor

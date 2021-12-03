@@ -2,9 +2,7 @@
 
 #include "piece.hpp"
 
-// making this a virtual class because it is one of two (this and Rook) that
-// are subclassed by the same child class (Queen)
-class Bishop : virtual public Piece
+class Bishop : public Piece
 {
 public:
 	//constructors

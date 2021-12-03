@@ -88,4 +88,16 @@ public:
 	   postcondition: moves includes (r,c) if it is not occupied by a teammate
 	   returns: true if there is already a piece at this space */
 	bool check_valid(std::vector<std::pair<int, int>>* moves, int r, int c);
+
+	// returns: the set of valid moves for a piece with rook rules
+	std::vector<std::pair<int, int>> get_valid_rook_moves();
+
+	// returns: the set of valid moves for a piece with bishop rules
+	std::vector<std::pair<int, int>> get_valid_bishop_moves();
+
+	// returns: the set of blockables for a piece with rook rules
+	std::vector < std::pair<int, int>> get_rook_blockables();
+
+	// returns: the set of blockables for a piece with bishop rules
+	std::vector < std::pair<int, int>> get_bishop_blockables();
 };

@@ -8,6 +8,7 @@
 #include "rook.hpp"
 
 #include <iostream>
+#include <exception>
 
 Board Bd;
 
@@ -83,7 +84,6 @@ void end_or_new_game(bool win)
 	return;
 }
 
-
 /* postcondition: check and checkmate are handled
    returns: true if the user wants to quit after checkmate */
 bool check_and_handle_game_conditions()
@@ -95,11 +95,13 @@ bool check_and_handle_game_conditions()
 	// check if the game is won
 	if (Bd.has_checkmate(USER_TEAM))
 	{
+		printer::print_board(Bd);
 		end_or_new_game(true);
 		return true;
 	}
 	if (Bd.has_checkmate(COMP_TEAM))
 	{
+		printer::print_board(Bd);
 		end_or_new_game(false);
 		return true;
 	}
@@ -115,9 +117,11 @@ void do_the_thing()
 	std::cout << std::endl;
 	printer::print_prompt();
 
-	// collect input
-	char input[9];
-	std::cin.getline(input, 9);
+	// collect input, with 81 extra characters in case of input overflow, which was causing stack overflow
+	char long_input[100], input[9];
+	std::cin.getline(long_input, 100);
+	std::strncpy(input, long_input, 9);
+
 	std::cout << std::endl;
 
 	// quit if that's the input
@@ -142,7 +146,7 @@ void do_the_thing()
 
 			// check for kings in check or checkmate
 			// end the game if check_and_handle returns true that the user wants to quit after checkmate
-			if(check_and_handle_game_conditions()) return;
+			if (check_and_handle_game_conditions()) return;
 
 			// if not, move the computer randomly
 			Move m = Bd.random_move();

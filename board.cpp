@@ -11,6 +11,7 @@
 
 #include <random>
 #include <iterator>
+#include <iostream>
 
 extern Team COMP_TEAM;
 extern Team USER_TEAM;
@@ -66,7 +67,30 @@ void Board::delete_heap_mem()
 {
 	for (Piece* p : pieces)
 	{
-		delete p;
+		switch (p->get_type())
+		{
+		case PType::K:
+			delete (King*)p;
+			break;
+		case PType::Q:
+			delete (Queen*)p;
+			break;
+		case PType::B:
+			delete (Bishop*)p;
+			break;
+		case PType::N:
+			delete (Knight*)p;
+			break;
+		case PType::R:
+			delete (Rook*)p;
+			break;
+		case PType::P:
+			delete (Pawn*)p;
+			break;
+		case PType::E:
+			delete p;
+			break;
+		}
 	}
 }
 
@@ -155,15 +179,24 @@ bool Board::has_checkmate(Team t)
 	// no checkmate if king can move
 	if (king->get_valid_moves().size() > 0) return false;
 
-	std::vector<Piece*> kings_teammates = get_active_pieces(Piece::opposite(t));
+	std::vector<Piece*> kings_team = get_active_pieces(Piece::opposite(t));
 
 	// else if king cannot move, is he unblockably threatened?
+	std::cout << "checking for checkmate" << std::endl;
 	std::vector<std::pair<int, int>> need_to_block = get_necessary_blocks(get_checking_pieces(t));
 
-	for (Piece* potential_blocker : kings_teammates)
+	printer::print_pairs(need_to_block);
+
+	// if there are nochecks to block, there cannot be a checkmate
+	if (need_to_block.size() == 0) return false;
+
+	for (Piece* potential_blocker : kings_team)
 	{
 		std::vector < std::pair<int, int>> intersect,
 			can_be_blocked = potential_blocker->get_valid_moves();
+
+		std::cout << std::endl << potential_blocker->get_name() << std::endl;
+		printer::print_pairs(can_be_blocked);
 
 		// STL algorithm
 		std::sort(can_be_blocked.begin(), can_be_blocked.end());
@@ -178,7 +211,7 @@ bool Board::has_checkmate(Team t)
 	}
 
 	// if no piece could block the threateners, checkmate
-	return  false;
+	return true;
 }
 
 std::vector<Piece*> Board::get_checking_pieces(Team t)
@@ -248,6 +281,7 @@ Move Board::random_move()
 	std::vector<Piece*> comp_pieces = get_active_pieces(COMP_TEAM);
 
 	// get necessary moves and flag need_to_block if applicable
+	std::cout << std::endl << "checking for requirements when moving random" << std::endl;
 	std::vector<std::pair<int, int>> blocks = get_necessary_blocks(get_checking_pieces(USER_TEAM));
 	bool need_to_block = blocks.size() > 0;
 
@@ -273,6 +307,8 @@ Move Board::random_move()
 				std::back_inserter(intersect)
 			);
 			valid_moves = intersect;
+			printer::print_pairs(intersect);
+			std::cout << " for piece " << p->get_name() << std::endl;
 		}
 
 		for (std::pair<int, int> move : valid_moves)
@@ -280,7 +316,6 @@ Move Board::random_move()
 			all_valid_moves.emplace_back(p->get_position(), move);
 		}
 	}
-
 	// randomly choose a move to make
 	std::mt19937 rng(std::random_device{}());
 	std::uniform_int_distribution<int> range(0, all_valid_moves.size());
@@ -306,6 +341,8 @@ std::vector<std::pair<int, int>> Board::get_necessary_blocks(std::vector<Piece*>
 {
 	std::vector<std::pair<int, int>> necessary_blocks;
 	bool needs_init = true;
+
+	std::cout << "number of threateners: " << threateners.size() << std::endl;
 
 	// check how to block each threatener
 	for (Piece* threatener : threateners)

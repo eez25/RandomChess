@@ -15,7 +15,7 @@ std::vector<std::pair<int,int>> King::get_valid_moves()
     // look at all the spaces within a width-three square centered at this Piece's square
     for(int loop_r = r-1; loop_r < r+2; loop_r++)
     {
-        for(int loop_c = c-1; loop_c < c-2; loop_c++)
+        for(int loop_c = c-1; loop_c < c+2; loop_c++)
         {
             threatened = false;
 
@@ -26,8 +26,11 @@ std::vector<std::pair<int,int>> King::get_valid_moves()
             if (Board::off_board(loop_r, loop_c)) continue;
 
             // check if any opposing piece is threatening this square
-            for (Piece* possible_threatener : Bd.get_checking_pieces(Piece::opposite(get_team())))
+            for (Piece* possible_threatener : Bd.get_active_pieces(Piece::opposite(get_team())))
             {
+                // a king cannot threaten another king
+                if (possible_threatener->get_type() == PType::K) continue;
+                    
                 if (possible_threatener->is_threatening(std::pair(loop_r, loop_c)))
                 {
                     threatened = true;
