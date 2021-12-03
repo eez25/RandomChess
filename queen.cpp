@@ -3,7 +3,6 @@
 #include "board.hpp"
 
 #include <algorithm>
-#include <iostream>
 
 extern Board Bd;
 
@@ -16,8 +15,6 @@ std::vector<std::pair<int, int>> Queen::get_valid_moves()
 	// if one of these sets of moves is empty, don't bother concatenating them
 	if (horiz_vert_moves.size() == 0) return diagonal_moves;
 	if (diagonal_moves.size() == 0) return horiz_vert_moves;
-
-	std::cout << "gluing them together" << std::endl;
 
 	// STL algorithm
 	horiz_vert_moves.insert(horiz_vert_moves.begin(),

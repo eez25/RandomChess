@@ -10,7 +10,7 @@
 #include "printer.hpp"
 
 #include <random>
-#include <iostream>
+#include <iterator>
 
 extern Team COMP_TEAM;
 extern Team USER_TEAM;
@@ -111,7 +111,8 @@ bool same_team(Piece* p, PType pt, Team t)
 	return p->get_team() == t;
 }
 
-//uses function pointers to above boolean methods
+// uses function pointers to above boolean methods
+// returns: the pieces in vec that have the attributes pt and/or t as decided by check_same
 std::vector<Piece*> check_pieces(bool (*check_same)(Piece*, PType, Team), std::vector<Piece*> vec, PType pt, Team t)
 {
 	std::vector<Piece*> ret;
@@ -125,19 +126,22 @@ std::vector<Piece*> check_pieces(bool (*check_same)(Piece*, PType, Team), std::v
 	return ret;
 }
 
-//passes function pointer as parameter
+// passes function pointer as parameter
+// returns: the active pieces of PType pt and Team t
 std::vector<Piece*> Board::get_active_pieces(PType pt, Team t)
 {
 	return check_pieces(same_type_team, pieces, pt, t);
 }
 
-//passes function pointer as parameter
+// passes function pointer as parameter
+// returns: the active pieces of PType pt
 std::vector<Piece*> Board::get_active_pieces(PType pt)
 {
 	return check_pieces(same_type, pieces, pt, Team::Empty);
 }
 
-//passes function pointer as parameter
+// passes function pointer as parameter
+// returns: the active pieces of Team t
 std::vector<Piece*> Board::get_active_pieces(Team t)
 {
 	return check_pieces(same_team, pieces, PType::E, t);
@@ -169,11 +173,11 @@ bool Board::has_checkmate(Team t)
 			can_be_blocked.begin(), can_be_blocked.end(),
 			std::back_inserter(intersect));
 
-		// if all threateners can be blocked, no checkmate
+		// if threateners can be blocked, no checkmate
 		if (intersect.size() > 0) return false;
 	}
 
-	// if no piece could block all threateners, checkmate
+	// if no piece could block the threateners, checkmate
 	return  false;
 }
 
@@ -240,8 +244,6 @@ void Board::move(Piece* p, std::pair<int, int> pos)
 
 Move Board::random_move()
 {
-	std::cout << "moving computer" << std::endl;
-
 	// get the possible pieces the computer can move
 	std::vector<Piece*> comp_pieces = get_active_pieces(COMP_TEAM);
 
@@ -253,8 +255,6 @@ Move Board::random_move()
 	std::vector < std::pair<
 		std::pair<int, int>,
 		std::pair<int, int>>> all_valid_moves;
-
-	std::cout << "counts of possible moves:" << std::endl;
 
 	for (Piece* p : comp_pieces)
 	{

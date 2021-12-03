@@ -63,6 +63,7 @@ int parse_row(char c)
 	return int(c - '0') - 1;
 }
 
+// announces end of game and prompts for and starts new game if wanted by player
 void end_or_new_game(bool win)
 {
 	// tell the user the result of the game
@@ -82,8 +83,15 @@ void end_or_new_game(bool win)
 	return;
 }
 
-bool check_and_handle_end()
+
+/* postcondition: check and checkmate are handled
+   returns: true if the user wants to quit after checkmate */
+bool check_and_handle_game_conditions()
 {
+	// tell the user if there is a check
+	if (Bd.get_checking_pieces(COMP_TEAM).size() > 0) std::cout << "The computer has put you in check!" << std::endl << std::endl;
+	if (Bd.get_checking_pieces(USER_TEAM).size() > 0) std::cout << "You have put the computer in check!" << std::endl << std::endl;
+
 	// check if the game is won
 	if (Bd.has_checkmate(USER_TEAM))
 	{
@@ -101,7 +109,7 @@ bool check_and_handle_end()
 void do_the_thing()
 {
 	// return if the game is won (and if the user doesn't want to play again, which is checked in the function)
-	if (check_and_handle_end()) return;
+	if (check_and_handle_game_conditions()) return;
 
 	// prompt user
 	std::cout << std::endl;
@@ -131,8 +139,10 @@ void do_the_thing()
 
 		// Attempt to move and if it is valid
 		if (Bd.board[from.first][from.second]->move(to)) {
-			// check the user just finished the game
-			if(check_and_handle_end()) return;
+
+			// check for kings in check or checkmate
+			// end the game if check_and_handle returns true that the user wants to quit after checkmate
+			if(check_and_handle_game_conditions()) return;
 
 			// if not, move the computer randomly
 			Move m = Bd.random_move();
@@ -158,17 +168,21 @@ void do_the_thing()
 
 int main()
 {
+	// create a new board
 	Bd = Board();
 
+	// print intro
 	std::cout << std::endl;
 	printer::print_intro();
 	printer::print_help();
 
+	// prompt the user to move on from intro
 	std::cout << "Hit the Enter key to begin!" << std::endl;
 	std::cin.ignore();
 
 	printer::print_board(Bd);
 
+	// begin the prompt, collect input, perform action, repeat... cycle
 	do_the_thing();
 
 	return 0;

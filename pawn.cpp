@@ -1,9 +1,6 @@
 #include "pawn.hpp"
 
 #include "board.hpp"
-#include "printer.hpp"
-
-#include <iostream>
 
 extern Board Bd;
 

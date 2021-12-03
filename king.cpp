@@ -12,7 +12,7 @@ std::vector<std::pair<int,int>> King::get_valid_moves()
     
     bool threatened;
 
-    //look at all the spaces within a width-three square centered at this Piece's square
+    // look at all the spaces within a width-three square centered at this Piece's square
     for(int loop_r = r-1; loop_r < r+2; loop_r++)
     {
         for(int loop_c = c-1; loop_c < c-2; loop_c++)

@@ -27,7 +27,7 @@ void printer::print_col_names()
     std::cout << "     A   B   C   D   E   F   G   H  " << std::endl;
 }
 
-/* prints a single row of the board, including the pieces currently present on it */
+// prints a single row of the board, including the pieces currently present on it
 void printer::print_row(std::vector<Piece*> row)
 {
     for (Piece* p : row)

@@ -147,10 +147,6 @@ bool Piece::move(std::pair<int, int> coords)
 		valid_moves = intersect;
 	}
 
-	std::cout << "Attempting to move piece " << get_name() << std::endl << "Valid moves:" << std::endl;
-	printer::print_pairs(valid_moves);
-	std::cout << std::endl;
-
 	// STL algorithm
 	// return false if the move is invalid
 	if (std::count(valid_moves.begin(), valid_moves.end(), coords) == 0) return false;
