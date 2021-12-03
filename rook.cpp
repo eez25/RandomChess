@@ -2,7 +2,7 @@
 
 #include "board.hpp"
 
-extern Board B;
+extern Board Bd;
 
 std::vector<std::pair<int,int>> Rook::get_valid_moves()
 {

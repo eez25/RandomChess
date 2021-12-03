@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <string>
 
@@ -6,46 +8,55 @@
 const int BOARD_LENGTH = 8;
 const std::vector<Piece> all_pieces;
 
-enum class col {
-    A = 0,
-    B = 1,
-    C = 2,
-    D = 3,
-    E = 4,
-    F = 5,
-    G = 6,
-    H = 7
+enum class Col {
+	A = 0,
+	B = 1,
+	C = 2,
+	D = 3,
+	E = 4,
+	F = 5,
+	G = 6,
+	H = 7
 };
 
 class Board
-{ 
-    public:
-        //holds the pieces active on the board in their appropriate spaces
-        std::vector<std::vector<Piece*>> board;
+{
+public:
+	// constructor
+	Board();
 
-        //holds the pieces who no longer occupy spaces on the board
-        std::vector<Piece*> removed_pieces;
+	// deletes the piece memory that exists in the heap
+	void delete_heap_mem();
 
-        //holds the pieces who occupy spaces on the board
-        std::vector<Piece*> active_pieces;
+	//holds the pieces active on the board in their appropriate spaces
+	std::vector<std::vector<Piece*>> board;
 
-        //retrieves the pieces in the given vector who meet the criteria passed in
-        std::vector<Piece*> get_pieces(std::vector<Piece*> vec, PType pt, Team t);
-        std::vector<Piece*> get_pieces(std::vector<Piece*> vec, PType pt);
-        std::vector<Piece*> get_pieces(std::vector<Piece*> vec, Team t);
+	//holds the pieces who no longer occupy spaces on the board
+	std::vector<Piece*> removed_pieces;
 
-        //determines if the team given has checkmated the other team
-        bool has_checkmate(Team t);
+	//holds the pieces who occupy spaces on the board
+	std::vector<Piece*> active_pieces;
 
-        //determines if the team given has checked the other team
-        bool has_check(Team t);
+	//retrieves the pieces in the given vector who meet the criteria passed in
+	std::vector<Piece*> get_pieces(std::vector<Piece*> vec, PType pt, Team t);
+	std::vector<Piece*> get_pieces(std::vector<Piece*> vec, PType pt);
+	std::vector<Piece*> get_pieces(std::vector<Piece*> vec, Team t);
 
-        //removes a piece from the board and makes it inactive; returns false if the piece is already off the board
-        bool remove_piece(Piece* p);
+	//determines if the team given has checkmated the other team
+	bool has_checkmate(Team t);
 
-        //replaces a piece on the board and makes it active; returns false if the piece is already on the board
-        bool replace_piece(Piece* p, std::pair<int,int> pos);
+	//determines if the team given has checked the other team
+	bool has_check(Team t);
 
-        // moves Piece p to board space pos and handles chain reactions such as removing pieces that were captured
-        void move(Piece* p, std::pair<int,int> pos);
+	//removes a piece from the board and makes it inactive; returns false if the piece is already off the board
+	bool remove_piece(Piece* p);
+
+	//replaces a piece on the board and makes it active; returns false if the piece is already on the board
+	bool replace_piece(Piece* p, std::pair<int, int> pos);
+
+	// moves Piece p to board space pos and handles chain reactions such as removing pieces that were captured
+	void move(Piece* p, std::pair<int, int> pos);
+	
+	// choses a random valid move and makes it
+	Move random_move();
 };

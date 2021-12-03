@@ -32,23 +32,58 @@ void printer::print_row(std::vector<Piece*> row)
 {
     for (Piece* p : row)
     {
-        std:: cout << " | " << p->get_name();
+        std::cout << " | " << p->get_name();
+            //p->get_name();
     }
     std::cout << " |";
 }
 
-/* The below was used for unit testing of this printer before replacing a vector of strings with a Board */
+void printer::print_prompt()
+{
+    std::cout << "What would you like to do?" << std::endl;
+}
 
-// std::vector<std::vector<std::string>> test = {{"","","K","","","","",""},
-//                                               {"","","","","","","",""},
-//                                               {"","","","","","","",""},
-//                                               {"","","","","","","",""},
-//                                               {"","","9","","","","",""},
-//                                               {"","","","","","","",""},
-//                                               {"","","","","P","","",""},
-//                                               {"","","","","","","",""}};
+void printer::print_cant_do()
+{
+    std::cout << "That move is invalid." << std::endl;
+}
 
-// int main(){
-//     print_board(test);
-//     return 0;
-// }
+void printer::print_help()
+{
+    std::cout
+        << "The uppercase pieces are yours.  Piece names are as follows:" << std::endl
+        << "    P - Pawn" << std::endl
+        << "    R - Rook" << std::endl
+        << "    N - kNight" << std::endl
+        << "    B - Bishop" << std::endl
+        << "    K - King" << std::endl
+        << "    Q - Queen" << std::endl
+        << std::endl
+        << "To move, type 'CR to CR' for char columns C and int rows R.  For example, to move a piece from " << std::endl
+        << "row 2 and column D to row 3 and column E, type 'D2 to E3'.  Lowercase column names are also" << std::endl
+        << "supported.  Type 'quit' to end the game." << std::endl
+        << std::endl;
+}
+
+void printer::print_comp_move(Move m)
+{
+    std::cout << "Computer moves piece " << m.moved_name << " from " << char(m.from.second + 65) << m.from.first
+        << " to " << char(m.to.second + 65) << m.to.first
+        << (m.captured_name == Piece::get_empty()->get_name() ? "" : " and captures piece " + m.captured_name) << "." << std::endl;
+}
+
+void printer::print_intro()
+{
+    std::cout
+        << "Hello and welcome to RandomChess!  This is a simple Chess simulator, created by Enya Zimecka," << std::endl
+        << "with an opponent who moves uniformly at random." << std::endl
+        << std::endl;
+}
+
+void printer::print_pairs(std::vector<std::pair<int, int>> pairs)
+{
+    for (std::pair<int, int> p : pairs)
+    {
+        std::cout << "(" << p.first << "," << p.second << ")," << std::endl;
+    }
+}
