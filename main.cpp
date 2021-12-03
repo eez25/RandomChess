@@ -117,10 +117,11 @@ void do_the_thing()
 	std::cout << std::endl;
 	printer::print_prompt();
 
-	// collect input, with 81 extra characters in case of input overflow, which was causing stack overflow
-	char long_input[100], input[9];
+	// collect input, with 81 extra characters in case of input overflow, which was causing stack overflow during testing
+	char long_input[100], input[10];
 	std::cin.getline(long_input, 100);
 	std::strncpy(input, long_input, 9);
+	input[9] = '\0';
 
 	std::cout << std::endl;
 

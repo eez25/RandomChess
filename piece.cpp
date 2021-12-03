@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "board.hpp"
-#include "printer.hpp"
 
 extern Board Bd;
 extern Team USER_TEAM;
@@ -131,8 +130,6 @@ std::vector<std::pair<int, int>> Piece::get_valid_moves()
 bool Piece::move(std::pair<int, int> coords)
 {
 	std::vector<std::pair<int, int>> valid_moves = get_valid_moves();
-
-	std::cout << "checking for a move if it is not restricted by necessity" << std::endl;
 
 	// check if there are any necessary blocks to be made to stop checking pieces from the opposite team
 	std::vector<std::pair<int, int>> must_move_to = Bd.get_necessary_blocks(Bd.get_checking_pieces(Piece::opposite(get_team())));

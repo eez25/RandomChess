@@ -7,7 +7,6 @@
 #include "queen.hpp"
 #include "rook.hpp"
 #include "piece.hpp"
-#include "printer.hpp"
 
 #include <random>
 #include <iterator>
@@ -182,10 +181,7 @@ bool Board::has_checkmate(Team t)
 	std::vector<Piece*> kings_team = get_active_pieces(Piece::opposite(t));
 
 	// else if king cannot move, is he unblockably threatened?
-	std::cout << "checking for checkmate" << std::endl;
 	std::vector<std::pair<int, int>> need_to_block = get_necessary_blocks(get_checking_pieces(t));
-
-	printer::print_pairs(need_to_block);
 
 	// if there are nochecks to block, there cannot be a checkmate
 	if (need_to_block.size() == 0) return false;
@@ -194,9 +190,6 @@ bool Board::has_checkmate(Team t)
 	{
 		std::vector < std::pair<int, int>> intersect,
 			can_be_blocked = potential_blocker->get_valid_moves();
-
-		std::cout << std::endl << potential_blocker->get_name() << std::endl;
-		printer::print_pairs(can_be_blocked);
 
 		// STL algorithm
 		std::sort(can_be_blocked.begin(), can_be_blocked.end());
@@ -281,7 +274,6 @@ Move Board::random_move()
 	std::vector<Piece*> comp_pieces = get_active_pieces(COMP_TEAM);
 
 	// get necessary moves and flag need_to_block if applicable
-	std::cout << std::endl << "checking for requirements when moving random" << std::endl;
 	std::vector<std::pair<int, int>> blocks = get_necessary_blocks(get_checking_pieces(USER_TEAM));
 	bool need_to_block = blocks.size() > 0;
 
@@ -307,8 +299,6 @@ Move Board::random_move()
 				std::back_inserter(intersect)
 			);
 			valid_moves = intersect;
-			printer::print_pairs(intersect);
-			std::cout << " for piece " << p->get_name() << std::endl;
 		}
 
 		for (std::pair<int, int> move : valid_moves)
@@ -341,8 +331,6 @@ std::vector<std::pair<int, int>> Board::get_necessary_blocks(std::vector<Piece*>
 {
 	std::vector<std::pair<int, int>> necessary_blocks;
 	bool needs_init = true;
-
-	std::cout << "number of threateners: " << threateners.size() << std::endl;
 
 	// check how to block each threatener
 	for (Piece* threatener : threateners)
