@@ -165,7 +165,7 @@ Move Piece::random_move()
 	move(to);
 
 	// return what we did
-	return Move(moved_name, to, from, captured_name);
+	return Move(moved_name, from, to, captured_name);
 }
 
 bool Piece::is_threatening(std::pair<int, int> pos)
@@ -183,10 +183,9 @@ bool Piece::check_valid(std::vector<std::pair<int, int>>* moves, int r, int c)
 	{
 		moves->emplace_back(r, c);
 		return false;
-
-		// if there is already piece here, this piece can move here if they are enemies
 	}
 	else {
+		// if there is already piece here, this piece can move here if they are enemies
 		if (Bd.board[r][c]->get_team() == opposite(get_team()))
 			moves->emplace_back(r, c);
 		return true;

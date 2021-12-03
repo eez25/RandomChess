@@ -2,6 +2,8 @@
 
 #include "board.hpp"
 
+#include <iostream>
+
 extern Board Bd;
 
 std::vector<std::pair<int, int>> Knight::get_valid_moves()
@@ -21,6 +23,8 @@ std::vector<std::pair<int, int>> Knight::get_valid_moves()
 		{2,-1}
 	};
 
+	std::cout << "checking knight's moves" << std::endl;
+
 	int r = get_position().first, c = get_position().second;
 	for (int i = 0; i < possible_directions.size(); i++)
 	{
@@ -29,10 +33,11 @@ std::vector<std::pair<int, int>> Knight::get_valid_moves()
 			loop_c = c + possible_directions[i].second;
 
 		// if the move is to a space that doesn't exist on the board, coninue to the next possible move
-		if (r < 0 || r >= BOARD_LENGTH || c < 0 || c >= BOARD_LENGTH) continue;
+		if (Board::off_board(loop_r,loop_c)) continue;
+
+		std::cout << "(" << loop_r << "," << loop_c << ")" << std::endl;
 
 		// else if this space exists on the board, check if it is a valid move
-		Piece* p = Bd.board[loop_r][loop_c];
 		check_valid(&moves, loop_r, loop_c);
 	}
 

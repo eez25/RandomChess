@@ -56,4 +56,7 @@ public:
 	
 	// choses a random valid move and makes it
 	Move random_move();
+
+	// returns true if the space at (r,c) is not on the board
+	static bool off_board(int r, int c);
 };

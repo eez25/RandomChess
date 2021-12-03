@@ -67,8 +67,10 @@ void printer::print_help()
 
 void printer::print_comp_move(Move m)
 {
-    std::cout << "Computer moves piece " << m.moved_name << " from " << char(m.from.second + 65) << m.from.first
-        << " to " << char(m.to.second + 65) << m.to.first
+    std::cout 
+        << std::endl 
+        << "Computer moves piece " << m.moved_name << " from " << char(m.from.second + 65) << m.from.first + 1
+        << " to " << char(m.to.second + 65) << m.to.first + 1
         << (m.captured_name == Piece::get_empty()->get_name() ? "" : " and captures piece " + m.captured_name) << "." << std::endl;
 }
 

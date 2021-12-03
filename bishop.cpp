@@ -16,23 +16,23 @@ std::vector<std::pair<int, int>> Bishop::get_valid_moves()
 	// check the positive, positive direction
 	for (int i = 1; i < std::min(BOARD_LENGTH - r, BOARD_LENGTH - c); i++)
 	{
-		if (check_valid(&moves, r + i, c + 1)) break;
+		if (check_valid(&moves, r + i, c + i)) break;
 	}
 
 	// check the negative, negative direction
-	for (int i = 1; i < std::min(r, c); i++)
+	for (int i = 1; i < std::min(r + 1, c + 1); i++)
 	{
 		if (check_valid(&moves, r - i, c - i)) break;
 	}
 
 	// check the positive, negative direction
-	for (int i = 1; i < std::min(BOARD_LENGTH - r, c); i++)
+	for (int i = 1; i < std::min(BOARD_LENGTH - r, c + 1); i++)
 	{
 		if (check_valid(&moves, r + i, c - i)) break;
 	}
 
 	// check the negative, positive direction
-	for (int i = 1; i < std::min(r, BOARD_LENGTH - c); i++)
+	for (int i = 1; i < std::min(r + 1, BOARD_LENGTH - c); i++)
 	{
 		if (check_valid(&moves, r - i, c + i)) break;
 	}

@@ -7,6 +7,7 @@
 #include "queen.hpp"
 #include "rook.hpp"
 #include "piece.hpp"
+#include "printer.hpp"
 
 #include <random>
 #include <iostream>
@@ -15,22 +16,22 @@ extern Team COMP_TEAM;
 
 std::vector<Piece*> generate_back_row(Team t, int r)
 {
-	
+
 	Rook* r1 = new Rook(t, r, (int)Col::A);
 	Rook* r2 = new Rook(t, r, (int)Col::H);
-	Knight* n1 = new Knight(t, r, (int)Col::B); 
+	Knight* n1 = new Knight(t, r, (int)Col::B);
 	Knight* n2 = new Knight(t, r, (int)Col::G);
 	Bishop* b1 = new Bishop(t, r, (int)Col::C);
 	Bishop* b2 = new Bishop(t, r, (int)Col::F);
-	King* k = new King(t, r, (int)Col::D);
-	Queen* q = new Queen(t, r, (int)Col::E);
+	King* k = new King(t, r, (int)Col::E);
+	Queen* q = new Queen(t, r, (int)Col::D);
 
 	std::vector<Piece*> row{
 		r1,
 		n1,
 		b1,
-		k,
 		q,
+		k,
 		b2,
 		n2,
 		r2
@@ -141,7 +142,6 @@ std::vector<Piece*> Board::get_active_pieces(Team t)
 	return check_pieces(same_team, pieces, PType::E, t);
 }
 
-
 bool Board::has_checkmate(Team t)
 {
 	// get opposing king
@@ -214,17 +214,20 @@ void Board::move(Piece* p, std::pair<int, int> pos)
 
 Move Board::random_move()
 {
+	std::cout << "moving computer" << std::endl;
+
 	// get the possible pieces the computer can move
 	std::vector<Piece*> comp_pieces = get_active_pieces(COMP_TEAM);
 
 	// calculate how many possible moves there are and use move counts as a distribution for picking a piece
-	std::vector<int> num_moves(comp_pieces.size());
+	std::vector<int> num_moves;
 	int sum = 0, count;
 
 	std::cout << "counts of possible moves:" << std::endl;
 
 	for (Piece* p : comp_pieces)
 	{
+		printer::print_pairs(p->get_valid_moves());
 		count = (int)p->get_valid_moves().size();
 		std::cout << p->get_name() << " at (" << p->get_position().first << ","
 			<< p->get_position().second << ") has " << count << " moves." << std::endl;
@@ -241,11 +244,11 @@ Move Board::random_move()
 
 	// determine which piece corresponds to that number in the distribution
 	for (int i = 0; i < comp_pieces.size(); i++)
-		{
+	{
 		if (rand_int > num_moves[i])
 		{
 			rand_int -= num_moves[i];
-			}
+		}
 		else
 		{
 			std::cout << comp_pieces[i]->get_name() << std::endl;
@@ -253,5 +256,10 @@ Move Board::random_move()
 			Move m = comp_pieces[i]->random_move();
 			return m;
 		}
-		}
+	}
+}
+
+bool Board::off_board(int r, int c)
+{
+	return r < 0 || r >= BOARD_LENGTH || c < 0 || c >= BOARD_LENGTH;
 }

@@ -72,7 +72,7 @@ void do_the_thing()
 	std::cout << std::endl;
 
 	// quit if that's the input
-	if (input == "quit") return;
+	if (std::strcmp(input, "quit") == 0) return;
 
 	// otherwise, try to parse the input and do the thing
 	try
